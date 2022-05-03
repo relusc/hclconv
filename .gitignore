@@ -1,0 +1,23 @@
+# vscode
+.vscode/
+
+# IntelliJ
+*.iml
+.idea/
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Binary compiled locally
+*hclconv*
+
+# Test files
+*.tfvars*
+!test/*tfvars*
+
+# Local goreleaser builds
+dist/

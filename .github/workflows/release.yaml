@@ -1,0 +1,63 @@
+name: release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: read
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+
+    # https://github.blog/2022-04-12-git-security-vulnerability-announced/
+    - run: |
+        git config --global --add safe.directory /github/workspace
+
+    # requires either #patch, #minor or #major in Git commit message
+    - name: create-tag
+      id: create-tag
+      if: github.ref == 'refs/heads/main'
+      uses: anothrNick/github-tag-action@1.36.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        RELEASE_BRANCHES: main
+
+    - uses: goreleaser/goreleaser-action@v2
+      with:
+        args: release --rm-dist
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: get-merged-pr
+      id: get-merged-pr
+      if: github.ref == 'refs/heads/main'
+      uses: jwalton/gh-find-current-pr@v1
+      with:
+        state: all
+
+    - name: create-release
+      id: create-release
+      if: github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.create-tag.outputs.new_tag }}
+        body: ${{ steps.get-merged-pr.outputs.body }}
+        files: dist/*.tar.gz
