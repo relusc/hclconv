@@ -38,7 +38,7 @@ jobs:
         WITH_V: true
         RELEASE_BRANCHES: main
 
-    - uses: goreleaser/goreleaser-action@v2
+    - uses: goreleaser/goreleaser-action@v3
       with:
         args: release --rm-dist
       env:
