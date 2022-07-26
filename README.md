@@ -34,4 +34,4 @@ Contributions are very welcome ! As written initially, there might be a few thin
 
 ## Maintainers
 
-Rene Schach - [@rescDev](https://github.com/rescDev)
+Rene Schach - [@relusc](https://github.com/relusc)
